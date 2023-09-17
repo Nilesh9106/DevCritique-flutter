@@ -1,34 +1,30 @@
-import 'package:mongo_dart/mongo_dart.dart';
-
 class User {
   final String id;
-  final String name;
+  final String? name;
   final String email;
   final String username;
   final int points;
   final String profilePicture;
-  final Map<dynamic, dynamic> socialMediaLinks;
 
-  User(
-      {required this.id,
-      required this.name,
-      required this.email,
-      required this.username,
-      required this.points,
-      required this.profilePicture,
-      required this.socialMediaLinks});
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.username,
+    required this.points,
+    required this.profilePicture,
+  });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: (json['_id'] as ObjectId).$oid.toString(),
+      id: (json['_id']),
       email: json['email'],
       name: json['name'] == null || json['name'] == ""
           ? json["username"]
           : json["name"],
       username: json['username'],
       points: json['points'],
-      profilePicture: json['profilePicture'],
-      socialMediaLinks: json['socialMediaLinks'] ?? <dynamic, dynamic>{},
+      profilePicture: json['profilePicture'] ?? "/user.png",
     );
   }
 }
@@ -52,10 +48,11 @@ class Project {
   factory Project.fromJson(Map<String, dynamic> json) {
     // print(json);
     return Project(
-      id: (json['_id'] as ObjectId).$oid.toString(),
+      id: json['_id'].toString(),
       link: json['link'],
       description: json['description'],
-      author: User.fromJson((json['author'] as List).first),
+      author: User.fromJson(
+          (json['author'] is List ? json['author'][0] : json['author'])),
       technologies: json['technologies'].cast<String>(),
       ogDetails: json['ogDetails'] ?? <dynamic, dynamic>{},
     );
@@ -66,7 +63,7 @@ class Review {
   final String id;
   final User author;
   final String text;
-  final int rating;
+  final int? rating;
   final String status;
   final List<dynamic> comments;
 
@@ -82,9 +79,8 @@ class Review {
 
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
-      id: (json['_id'] as ObjectId).$oid.toString(),
-      // project: Project.fromJson((json['project'] as List).first),
-      author: User.fromJson((json['author'] as List).first),
+      id: json['_id'].toString(),
+      author: User.fromJson((json['author'])),
       text: json['text'],
       rating: json['rating'],
       status: json['status'],

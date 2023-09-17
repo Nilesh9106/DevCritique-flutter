@@ -1,26 +1,21 @@
-import 'package:devcritique/model/model.dart' as models;
-import 'package:devcritique/service/mongodb.dart';
-import 'package:mongo_dart/mongo_dart.dart';
+import 'dart:convert';
+import 'package:devcritique/model/model.dart';
+import 'package:http/http.dart';
 
 class ReviewService {
-  static Future<List<models.Review>> getReviewsByProject(String id) async {
-    try {
-      final pipeline = AggregationPipelineBuilder()
-          .addStage(Match(
-              where.eq('project', ObjectId.fromHexString(id)).map['\$query']))
-          .addStage(Lookup(
-              from: 'users',
-              localField: 'author',
-              foreignField: '_id',
-              as: 'author'))
-          .build();
-      var reviews = await Mongo.review.aggregateToStream(pipeline).toList();
-      return List.from(reviews)
-          .map<models.Review>((review) => models.Review.fromJson(review))
+  static Future<List<Review>> getReviewsByProjectId(String id) async {
+    final response = await get(
+        Uri.parse("https://devcritique-api.vercel.app/api/projects/$id"));
+
+    if (response.statusCode == 200) {
+      var decoded = jsonDecode(response.body);
+      decoded = decoded['reviews'];
+      // print(decoded);
+      return List.from(decoded)
+          .map<Review>((review) => Review.fromJson(review))
           .toList();
-    } on Exception catch (e) {
-      print(e);
-      return [];
+    } else {
+      throw Exception("failed to load projects");
     }
   }
 }

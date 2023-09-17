@@ -1,13 +1,14 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:devcritique/service/auth/authenticator.dart';
-import 'package:devcritique/service/mongodb.dart';
 import 'package:devcritique/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Mongo.connect();
+  SharedPreferences.getInstance().then((value) => {
+        if (value.getBool("isAuthenticated") == null)
+          {value.setBool("isAuthenticated", false)}
+      });
   runApp(const DevCritique());
 }
 
@@ -19,6 +20,7 @@ class DevCritique extends StatelessWidget {
     return MaterialApp(
       title: "Dev Critique",
       debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.system,
       theme: MyTheme.lightTheme(context),
       darkTheme: MyTheme.darkTheme(context),
       home: Authenticator(),

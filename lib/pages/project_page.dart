@@ -1,5 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:devcritique/components/user_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,10 +20,16 @@ class ProjectPage extends StatefulWidget {
 
 class _ProjectPageState extends State<ProjectPage> {
   List<Review> reviews = [];
+  bool loading = false;
 
   getReviews() async {
-    reviews = await ReviewService.getReviewsByProject(widget.project.id);
-    setState(() {});
+    setState(() {
+      loading = true;
+    });
+    reviews = await ReviewService.getReviewsByProjectId(widget.project.id);
+    setState(() {
+      loading = false;
+    });
     print(reviews);
   }
 
@@ -44,16 +50,7 @@ class _ProjectPageState extends State<ProjectPage> {
         // mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ListTile(
-            leading: CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(
-                  widget.project.author.profilePicture != '/user.png'
-                      ? widget.project.author.profilePicture
-                      : "https://devcritique.vercel.app/user.png"),
-            ),
-            title: Text(widget.project.author.name),
-            subtitle: Text("@${widget.project.author.username}"),
-          ),
+          UserDetail(user: widget.project.author),
           const SizedBox(
             height: 5,
           ),
@@ -102,11 +99,50 @@ class _ProjectPageState extends State<ProjectPage> {
               : Text(widget.project.link),
           Divider(
             height: 60,
-            color: Colors.grey.shade900,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey.shade900
+                : Colors.grey.shade300,
           ),
-          Expanded(
-            child: ReviewItem(reviews: reviews),
-          )
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              children: [
+                const Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Write a review",
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    maxLines: 5,
+                    minLines: 1,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: const Size(80, 45),
+                  ),
+                  onPressed: () {},
+                  child: const Text(
+                    "Submit",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 40,
+          ),
+          loading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Expanded(
+                  child: ReviewItem(reviews: reviews),
+                )
         ],
       ),
     );
@@ -123,6 +159,7 @@ class ReviewItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      physics: const BouncingScrollPhysics(),
       itemCount: reviews.length,
       itemBuilder: (context, index) => _buildReview(reviews[index]),
     );
@@ -130,27 +167,15 @@ class ReviewItem extends StatelessWidget {
 
   Widget _buildReview(Review review) {
     return Card(
-      elevation: 1,
-      margin: const EdgeInsets.symmetric(vertical: 5),
+      elevation: 0.5,
+      margin: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
       shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Colors.grey.shade800,
-          width: 0.3,
-        ),
+        borderRadius: BorderRadius.circular(5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ListTile(
-            leading: CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(
-                  review.author.profilePicture != '/user.png'
-                      ? review.author.profilePicture
-                      : "https://devcritique.vercel.app/user.png"),
-            ),
-            title: Text(review.author.name),
-            subtitle: Text("@${review.author.username}"),
-          ),
+          UserDetail(user: review.author),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
@@ -160,14 +185,6 @@ class ReviewItem extends StatelessWidget {
                 fontSize: 16,
               ),
             ),
-          ),
-          TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.comment,
-              size: 20,
-            ),
-            label: const Text("Discuss"),
           ),
         ],
       ),

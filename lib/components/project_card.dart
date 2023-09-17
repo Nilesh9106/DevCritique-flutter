@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:devcritique/components/user_detail.dart';
 import 'package:devcritique/model/model.dart';
 import 'package:devcritique/pages/project_page.dart';
 import 'package:flutter/material.dart';
@@ -23,30 +24,15 @@ class ProjectWidget extends StatelessWidget {
           )
         },
         child: Card(
-          elevation: 1,
+          elevation: 0.5,
           margin: EdgeInsets.symmetric(vertical: 5),
-          shape: RoundedRectangleBorder(
-            side: BorderSide(
-                // border color
-                color: Colors.grey.shade800,
-                // border thickness
-                width: 0.3),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: CachedNetworkImageProvider(
-                        project.author.profilePicture != '/user.png'
-                            ? project.author.profilePicture
-                            : "https://devcritique.vercel.app/user.png"),
-                  ),
-                  title: Text(project.author.name),
-                  subtitle: Text("@${project.author.username}"),
-                ),
+                UserDetail(user: project.author),
                 SizedBox(
                   height: 5,
                 ),

@@ -1,7 +1,7 @@
-// ignore_for_file: prefer_const_constructors
-
+import 'package:devcritique/components/mydrawer.dart';
 import 'package:devcritique/components/project_card.dart';
 import 'package:devcritique/model/model.dart';
+import 'package:devcritique/pages/create_post.dart';
 import 'package:devcritique/pages/profile_page.dart';
 import 'package:devcritique/pages/search_page.dart';
 import 'package:devcritique/service/projects/project_service.dart';
@@ -17,7 +17,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _pages = <Widget>[HomePage(), Search(), Profile()];
+  static const List<Widget> _pages = <Widget>[HomePage(), Search()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +26,7 @@ class _HomeState extends State<Home> {
         children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.shifting,
+        // type: BottomNavigationBarType.shifting,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home_filled),
@@ -35,10 +35,6 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
             icon: Icon(Icons.search_outlined),
             label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -68,13 +64,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> loadData() async {
-    projects = await ProjectService.getProjects();
+    await ProjectService.fetchProjects();
+    projects = ProjectService.projects;
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const MyDrawer(),
       appBar: AppBar(
         title: const Text("Home"),
         centerTitle: true,
@@ -86,10 +84,24 @@ class _HomePageState extends State<HomePage> {
           : RefreshIndicator(
               onRefresh: loadData,
               child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
                   itemCount: projects.length,
                   itemBuilder: (context, index) =>
                       ProjectWidget(project: projects[index])),
             ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PostCreate(),
+            ),
+          );
+        },
+        tooltip: "Create Post",
+        backgroundColor: Colors.deepPurple,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
     );
   }
 }
