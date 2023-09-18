@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:devcritique/model/model.dart';
+import 'package:devcritique/pages/edit_profile.dart';
 import 'package:devcritique/pages/login_page.dart';
 import 'package:devcritique/pages/profile_page.dart';
 import 'package:devcritique/service/auth/auth_service.dart';
@@ -71,6 +72,18 @@ class _MyDrawerState extends State<MyDrawer> {
             ),
           ),
           ListTile(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EditProfile(
+                            user: user!,
+                          )));
+            },
+            leading: const Icon(Icons.edit),
+            title: const Text("Edit Profile"),
+          ),
+          ListTile(
             onTap: () async {
               await AuthService.logout();
               Navigator.pushReplacement(context,
@@ -78,7 +91,7 @@ class _MyDrawerState extends State<MyDrawer> {
             },
             leading: const Icon(Icons.logout),
             title: const Text("Logout"),
-          )
+          ),
         ],
       ),
     );

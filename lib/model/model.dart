@@ -24,7 +24,10 @@ class User {
           : json["name"],
       username: json['username'],
       points: json['points'],
-      profilePicture: json['profilePicture'] ?? "/user.png",
+      profilePicture: json['profilePicture'] == null ||
+              json["profilePicture"] == "/user.png"
+          ? "https://devcritique.vercel.app/user.png"
+          : json['profilePicture'],
     );
   }
 }

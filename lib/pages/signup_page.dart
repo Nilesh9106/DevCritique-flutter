@@ -1,3 +1,4 @@
+import 'package:devcritique/components/snackbar.dart';
 import 'package:devcritique/pages/login_page.dart';
 import 'package:devcritique/service/auth/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -27,12 +28,8 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         loading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              "Account created successfully! check your email for verification:)"),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(MySnackBar(
+          "Account created successfully! check your email for verification."));
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -42,11 +39,7 @@ class _SignUpState extends State<SignUp> {
         ),
       );
     } on Exception catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(MySnackBar(e.toString()));
       setState(() {
         loading = false;
       });

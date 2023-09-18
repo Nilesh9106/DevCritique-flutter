@@ -20,7 +20,7 @@ class DevCritique extends StatelessWidget {
     return MaterialApp(
       title: "Dev Critique",
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
       theme: MyTheme.lightTheme(context),
       darkTheme: MyTheme.darkTheme(context),
       home: Authenticator(),

@@ -38,4 +38,29 @@ class ProjectService {
       throw Exception("failed to search projects");
     }
   }
+
+  static Future<void> addProject(
+      {required String link,
+      required String author,
+      required String description,
+      required String token,
+      required String tech}) async {
+    List<String> techs = tech.split(",");
+
+    var url = Uri.parse('https://devcritique-api.vercel.app/api/projects/');
+    var response = await post(url,
+        headers: {"Content-Type": "application/json", "authorization": token},
+        body: jsonEncode({
+          "link": link,
+          "author": author,
+          "description": description,
+          "technologies": techs,
+        }));
+
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode == 201) {
+    } else {
+      throw Exception(decoded["error"]);
+    }
+  }
 }

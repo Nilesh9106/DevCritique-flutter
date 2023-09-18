@@ -81,13 +81,18 @@ class _HomePageState extends State<HomePage> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : RefreshIndicator(
-              onRefresh: loadData,
-              child: ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: projects.length,
-                  itemBuilder: (context, index) =>
-                      ProjectWidget(project: projects[index])),
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: RefreshIndicator(
+                onRefresh: loadData,
+                semanticsLabel: "Pull to refresh",
+                semanticsValue: "Pull to refresh",
+                child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: projects.length,
+                    itemBuilder: (context, index) =>
+                        ProjectWidget(project: projects[index])),
+              ),
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

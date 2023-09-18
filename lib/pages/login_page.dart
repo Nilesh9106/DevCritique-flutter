@@ -1,3 +1,4 @@
+import 'package:devcritique/components/snackbar.dart';
 import 'package:devcritique/pages/home_page.dart';
 import 'package:devcritique/pages/signup_page.dart';
 import 'package:devcritique/service/auth/auth_service.dart';
@@ -34,11 +35,7 @@ class _LoginState extends State<Login> {
         ),
       );
     } on Exception catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(MySnackBar(e.toString()));
       setState(() {
         loading = false;
       });
@@ -79,7 +76,9 @@ class _LoginState extends State<Login> {
                       TextField(
                         controller: _emailController,
                         decoration: const InputDecoration(
-                            labelText: "Email", hintText: "Enter your email"),
+                          labelText: "Email",
+                          hintText: "Enter your email",
+                        ),
                       ),
                       const SizedBox(
                         height: 20,
