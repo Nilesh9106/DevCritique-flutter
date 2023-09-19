@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:devcritique/model/model.dart';
 import 'package:http/http.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ReviewService {
   static Future<List<Review>> getReviewsByProjectId(String id) async {

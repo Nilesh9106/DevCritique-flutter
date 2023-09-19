@@ -17,7 +17,6 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   List<Project> projects = [];
   List<Review> reviews = [];
-  late TabController _tabController;
   bool loading = false;
   getData() async {
     setState(() {
