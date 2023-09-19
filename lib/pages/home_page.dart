@@ -2,7 +2,6 @@ import 'package:devcritique/components/mydrawer.dart';
 import 'package:devcritique/components/project_card.dart';
 import 'package:devcritique/model/model.dart';
 import 'package:devcritique/pages/create_post.dart';
-import 'package:devcritique/pages/profile_page.dart';
 import 'package:devcritique/pages/search_page.dart';
 import 'package:devcritique/service/projects/project_service.dart';
 import 'package:flutter/material.dart';

@@ -82,6 +82,7 @@ class _SignUpState extends State<SignUp> {
                         decoration: const InputDecoration(
                             labelText: "Username",
                             hintText: "Enter your Username"),
+                        keyboardType: TextInputType.name,
                       ),
                       const SizedBox(
                         height: 20,
@@ -90,6 +91,7 @@ class _SignUpState extends State<SignUp> {
                         controller: _emailController,
                         decoration: const InputDecoration(
                             labelText: "Email", hintText: "Enter your email"),
+                        keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(
                         height: 20,
@@ -101,6 +103,7 @@ class _SignUpState extends State<SignUp> {
                             // border: OutlineInputBorder(),
                             labelText: "Password",
                             hintText: "Enter your password"),
+                        keyboardType: TextInputType.visiblePassword,
                       ),
                       const SizedBox(
                         height: 20,

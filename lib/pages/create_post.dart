@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:devcritique/components/snackbar.dart';
 import 'package:devcritique/service/projects/project_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,13 +24,26 @@ class _PostCreateState extends State<PostCreate> {
     var user = jsonDecode(pref.getString("user")!);
     var token = pref.getString("token")!;
 
-    await ProjectService.addProject(
-      link: linkController.text,
-      author: user["_id"],
-      token: token,
-      description: descriptionController.text,
-      tech: tagsController.text,
-    );
+    try {
+      await ProjectService.addProject(
+        link: linkController.text,
+        author: user["_id"],
+        token: token,
+        description: descriptionController.text,
+        tech: tagsController.text,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        MySnackBar(
+          "Project Added successfully",
+        ),
+      );
+    } on Exception catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        MySnackBar(
+          e.toString(),
+        ),
+      );
+    }
     await ProjectService.fetchProjects();
     Navigator.pop(context);
     setState(() {
@@ -64,6 +78,7 @@ class _PostCreateState extends State<PostCreate> {
                       ),
                       TextFormField(
                         controller: linkController,
+                        keyboardType: TextInputType.url,
                         decoration: const InputDecoration(
                           hintText: "Link of Project",
                         ),
@@ -73,9 +88,13 @@ class _PostCreateState extends State<PostCreate> {
                       ),
                       TextFormField(
                         controller: descriptionController,
+                        keyboardType: TextInputType.multiline,
                         decoration: const InputDecoration(
                           hintText: "Description",
                         ),
+                        scrollPhysics: const BouncingScrollPhysics(),
+                        maxLines: 6,
+                        minLines: 1,
                       ),
                       const SizedBox(
                         height: 20,
@@ -83,7 +102,7 @@ class _PostCreateState extends State<PostCreate> {
                       TextFormField(
                         controller: tagsController,
                         decoration: const InputDecoration(
-                          hintText: "Tags",
+                          hintText: "Tags separated by comma",
                         ),
                       ),
                       const SizedBox(

@@ -61,10 +61,29 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: CachedNetworkImageProvider(
-                      widget.user.profilePicture,
+                  Hero(
+                    tag: widget.user.profilePicture,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(50),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => profilePicture(
+                                image: widget.user.profilePicture,
+                              ),
+                            ),
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage: CachedNetworkImageProvider(
+                            widget.user.profilePicture,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -93,7 +112,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             ),
             loading
                 ? const Center(
-                    child: CircularProgressIndicator(),
+                    child: LinearProgressIndicator(),
                   )
                 : Container(
                     margin: EdgeInsets.all(10),
@@ -129,12 +148,39 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildProjectList() {
-    return Column(
-      children: projects.map((e) => ProjectWidget(project: e)).toList(),
-    );
+    return projects.isEmpty
+        ? Text("No Projects")
+        : Column(
+            children: projects.map((e) => ProjectWidget(project: e)).toList(),
+          );
   }
 
   Widget _buildReviewList() {
     return Text("data");
+  }
+}
+
+class profilePicture extends StatelessWidget {
+  final String image;
+  const profilePicture({super.key, required this.image});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        color: Colors.transparent,
+        child: Center(
+          child: Hero(
+            tag: image,
+            child: CircleAvatar(
+              radius: 150,
+              backgroundImage: CachedNetworkImageProvider(
+                image,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

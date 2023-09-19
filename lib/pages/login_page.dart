@@ -79,6 +79,7 @@ class _LoginState extends State<Login> {
                           labelText: "Email",
                           hintText: "Enter your email",
                         ),
+                        keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(
                         height: 20,
@@ -90,6 +91,7 @@ class _LoginState extends State<Login> {
                             // border: OutlineInputBorder(),
                             labelText: "Password",
                             hintText: "Enter your password"),
+                        keyboardType: TextInputType.visiblePassword,
                       ),
                       const SizedBox(
                         height: 20,

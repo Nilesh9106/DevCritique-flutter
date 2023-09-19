@@ -33,7 +33,7 @@ class ReviewService {
     final decoded = jsonDecode(response.body) as Map<String, dynamic>;
     if (response.statusCode == 201) {
     } else {
-      throw Exception(decoded["error"]);
+      throw Exception(decoded["message"]);
     }
   }
 }

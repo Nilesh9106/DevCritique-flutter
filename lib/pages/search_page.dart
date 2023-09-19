@@ -46,7 +46,7 @@ class _SearchState extends State<Search> {
           end: Alignment.bottomCenter,
           colors: Theme.of(context).brightness == Brightness.dark
               ? [
-                  Color.fromRGBO(12, 12, 12, 1),
+                  const Color.fromRGBO(12, 12, 12, 1),
                   Colors.black,
                 ]
               : [
@@ -59,21 +59,32 @@ class _SearchState extends State<Search> {
         backgroundColor: Colors.transparent,
         body: SafeArea(
           child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
             slivers: [
               SliverAppBar(
-                collapsedHeight: 80,
-                expandedHeight: 80,
+                collapsedHeight: 90,
+                expandedHeight: 90,
                 floating: true,
-                backgroundColor: Colors.transparent,
-                // pinned: true,
+                pinned: true,
                 scrolledUnderElevation: 0,
-                flexibleSpace: Padding(
+                backgroundColor: Colors.transparent,
+                flexibleSpace: Container(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 16.0),
                   child: TextField(
                     controller: _searchController,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.search,
+                    onSubmitted: (value) {
+                      String query = _searchController.text.trim();
+                      if (query.isNotEmpty) {
+                        print(query);
+                        searchProject(query);
+                      }
+                    },
+                    textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
-                      labelText: 'Search',
+                      hintText: 'Search...',
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.search),
                         onPressed: () {
@@ -97,7 +108,12 @@ class _SearchState extends State<Search> {
                             child: Center(child: CircularProgressIndicator()),
                           )
                         : _searchResults.isEmpty
-                            ? const Center(child: Text('No results found.'))
+                            ? const Center(
+                                child: Text(
+                                  'No results found.',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              )
                             : ListView.builder(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 10),

@@ -222,6 +222,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                       constraints: BoxConstraints(maxHeight: 40)),
                   maxLines: 5,
                   minLines: 1,
+                  keyboardType: TextInputType.multiline,
                 ),
               ),
               const SizedBox(
@@ -272,11 +273,15 @@ class ReviewList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      physics: const BouncingScrollPhysics(),
-      itemCount: reviews.length,
-      itemBuilder: (context, index) => _buildReview(reviews[index]),
-    );
+    return reviews.isEmpty
+        ? const Center(
+            child: Text("No reviews yet", style: TextStyle(fontSize: 18)),
+          )
+        : ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: reviews.length,
+            itemBuilder: (context, index) => _buildReview(reviews[index]),
+          );
   }
 
   Widget _buildReview(Review review) {
