@@ -118,7 +118,7 @@ class _SignUpState extends State<SignUp> {
                         onPressed: () {
                           signup(context);
                         },
-                        child: const Text("Login"),
+                        child: const Text("SignUp"),
                       ),
                       const SizedBox(
                         height: 20,

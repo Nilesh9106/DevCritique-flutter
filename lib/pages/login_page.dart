@@ -26,13 +26,14 @@ class _LoginState extends State<Login> {
       setState(() {
         loading = false;
       });
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) {
             return const Home();
           },
         ),
+        (route) => false,
       );
     } on Exception catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(MySnackBar(e.toString()));

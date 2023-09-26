@@ -187,10 +187,10 @@ class _EditProfileState extends State<EditProfile> {
 
   Container imageBottomSheet(BuildContext context) {
     return Container(
-      height: 200,
       margin: const EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        runSpacing: 15,
         children: [
           Container(
             decoration: BoxDecoration(

@@ -1,16 +1,93 @@
 import 'dart:convert';
+import 'package:devcritique/components/og_detail.dart';
 import 'package:devcritique/components/snackbar.dart';
 import 'package:devcritique/components/user_detail.dart';
 import 'package:devcritique/model/model.dart';
+import 'package:devcritique/service/projects/project_service.dart';
 import 'package:devcritique/service/reviews/review_service.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-class ProjectWidget extends StatelessWidget {
+class ProjectWidget extends StatefulWidget {
   final Project project;
   const ProjectWidget({super.key, required this.project});
+
+  @override
+  State<ProjectWidget> createState() => _ProjectWidgetState();
+}
+
+class _ProjectWidgetState extends State<ProjectWidget> {
+  SharedPreferences? pref;
+  bool? isliked;
+  bool loading = false;
+
+  @override
+  void initState() {
+    SharedPreferences.getInstance().then((value) {
+      var user = jsonDecode(value.getString("user")!);
+      setState(() {
+        isliked = widget.project.like.contains(user["_id"]);
+      });
+    });
+    super.initState();
+  }
+
+  Future handleLike() async {
+    if (loading) {
+      print("aleady loading");
+      return;
+    }
+    setState(() {
+      loading = true;
+    });
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var user = jsonDecode(pref.getString("user")!);
+    var token = pref.getString("token")!;
+    if (isliked!) {
+      setState(() {
+        isliked = false;
+        widget.project.like.remove(user["_id"]);
+      });
+      try {
+        await ProjectService.dislike(
+            project: widget.project.id, author: user["_id"], token: token);
+        setState(() {
+          loading = false;
+        });
+      } on Exception catch (e) {
+        setState(() {
+          isliked = true;
+          widget.project.like.add(user["_id"]);
+          loading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          MySnackBar(e.toString()),
+        );
+      }
+    } else {
+      setState(() {
+        isliked = true;
+        widget.project.like.add(user["_id"]);
+      });
+      try {
+        await ProjectService.like(
+            project: widget.project.id, author: user["_id"], token: token);
+
+        setState(() {
+          loading = false;
+        });
+      } on Exception catch (e) {
+        setState(() {
+          widget.project.like.remove(user["_id"]);
+          isliked = false;
+          loading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          MySnackBar(e.toString()),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,95 +100,62 @@ class ProjectWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            UserDetail(user: project.author),
+            UserDetail(user: widget.project.author),
             const SizedBox(
               height: 5,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-              child: Text(project.description, textAlign: TextAlign.start),
+              child:
+                  Text(widget.project.description, textAlign: TextAlign.start),
             ),
             const SizedBox(
               height: 5,
             ),
-            project.ogDetails['title'] != null &&
-                    project.ogDetails['title'] != ""
-                ? ListTile(
-                    onTap: () async {
-                      if (!await launchUrl(
-                        Uri.parse(project.link),
-                        mode: LaunchMode.externalApplication,
-                      )) {
-                        print("could not fetch ${project.link}");
-                      }
-                    },
-                    dense: true,
-                    leading: CachedNetworkImage(
-                      imageUrl: project.ogDetails['image'],
-                      progressIndicatorBuilder:
-                          (context, url, downloadProgress) =>
-                              CircularProgressIndicator(
-                                  value: downloadProgress.progress),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error_outline),
-                    ),
-                    title: Text((project.ogDetails["title"]),
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    subtitle: Text(
-                      project.ogDetails["description"],
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )
-                : TextButton(
-                    onPressed: () async {
-                      if (!await launchUrl(
-                        Uri.parse(project.link),
-                        mode: LaunchMode.externalApplication,
-                      )) {
-                        print("could not fetch ${project.link}");
-                      }
-                    },
-                    child: Text(project.link),
-                  ),
+            OgPreview(link: widget.project.link),
             const SizedBox(
               height: 10,
             ),
-            Container(
-              alignment: Alignment.center,
-              child: TextButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      ModalBottomSheetRoute(
-                        builder: (context) => ReviewBottomSheet(
-                          project: project,
-                        ),
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                            maxHeight:
-                                MediaQuery.of(context).size.height * 0.6),
-                        elevation: 1,
-                        showDragHandle: true,
-                        backgroundColor:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? const Color.fromRGBO(15, 15, 15, 1)
-                                : Colors.grey[200],
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(10),
-                          ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              TextButton.icon(
+                onPressed: handleLike,
+                icon: Icon(
+                  (isliked ?? false) ? Icons.favorite : Icons.favorite_outline,
+                  color: (isliked ?? false) ? Colors.red : null,
+                ),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).textTheme.bodyLarge!.color,
+                ),
+                label: Text("${widget.project.like.length}"),
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    ModalBottomSheetRoute(
+                      builder: (context) => ReviewBottomSheet(
+                        project: widget.project,
+                      ),
+                      isScrollControlled: true,
+                      elevation: 1,
+                      useSafeArea: true,
+                      showDragHandle: true,
+                      backgroundColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? const Color.fromRGBO(15, 15, 15, 1)
+                              : Colors.grey[200],
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
                         ),
                       ),
-                    );
-                  },
-                  style: TextButton.styleFrom(
-                      alignment: Alignment.center,
-                      fixedSize: const Size(double.maxFinite, 30)),
-                  icon: const Icon(Icons.rate_review_rounded),
-                  label: const Text("Review")),
-            ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.rate_review_rounded),
+              ),
+            ]),
           ],
         ),
       ),
@@ -189,7 +233,6 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.6,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
@@ -264,7 +307,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
   }
 }
 
-class ReviewList extends StatelessWidget {
+class ReviewList extends StatefulWidget {
   final List<Review> reviews;
   const ReviewList({
     Key? key,
@@ -272,19 +315,105 @@ class ReviewList extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<ReviewList> createState() => _ReviewListState();
+}
+
+class _ReviewListState extends State<ReviewList> {
+  Map<String, bool> upvoted = {};
+  bool loading = false;
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
+  void initState() {
+    SharedPreferences.getInstance().then((value) {
+      var user = jsonDecode(value.getString("user")!);
+      widget.reviews.forEach((review) {
+        setState(() {
+          upvoted[review.id] = review.upVote.contains(user["_id"]);
+        });
+      });
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return reviews.isEmpty
+    return widget.reviews.isEmpty
         ? const Center(
             child: Text("No reviews yet", style: TextStyle(fontSize: 18)),
           )
         : ListView.builder(
             physics: const BouncingScrollPhysics(),
-            itemCount: reviews.length,
-            itemBuilder: (context, index) => _buildReview(reviews[index]),
+            itemCount: widget.reviews.length,
+            itemBuilder: (context, index) =>
+                _buildReview(context, widget.reviews[index]),
           );
   }
 
-  Widget _buildReview(Review review) {
+  Future handleUpvote(Review review) async {
+    if (loading) {
+      print("aleady loading");
+      return;
+    }
+    setState(() {
+      loading = true;
+    });
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var user = jsonDecode(pref.getString("user")!);
+    var token = pref.getString("token")!;
+    if (upvoted[review.id]!) {
+      setState(() {
+        upvoted[review.id] = false;
+        review.upVote.remove(user["_id"]);
+      });
+      try {
+        await ReviewService.downVote(
+            review: review.id, author: user["_id"], token: token);
+        setState(() {
+          loading = false;
+        });
+      } on Exception catch (e) {
+        setState(() {
+          upvoted[review.id] = true;
+          review.upVote.add(user["_id"]);
+          loading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          MySnackBar(e.toString()),
+        );
+      }
+    } else {
+      setState(() {
+        upvoted[review.id] = true;
+        review.upVote.add(user["_id"]);
+      });
+      try {
+        await ReviewService.upVote(
+            review: review.id, author: user["_id"], token: token);
+
+        setState(() {
+          loading = false;
+        });
+      } on Exception catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          MySnackBar(e.toString()),
+        );
+        setState(() {
+          review.upVote.remove(user["_id"]);
+          upvoted[review.id] = false;
+          loading = false;
+        });
+      }
+    }
+  }
+
+  Widget _buildReview(BuildContext context, Review review) {
     return Card(
       elevation: 0.5,
       margin: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
@@ -304,6 +433,20 @@ class ReviewList extends StatelessWidget {
                 fontSize: 16,
               ),
             ),
+          ),
+          TextButton.icon(
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).textTheme.bodyLarge!.color,
+            ),
+            onPressed: () {
+              handleUpvote(review);
+            },
+            icon: Icon(
+              Icons.arrow_upward,
+              size: 24,
+              color: (upvoted[review.id] ?? false) ? Colors.green : null,
+            ),
+            label: Text("${review.upVote.length}"),
           ),
         ],
       ),

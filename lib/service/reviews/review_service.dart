@@ -35,4 +35,48 @@ class ReviewService {
       throw Exception(decoded["message"]);
     }
   }
+
+  static Future<void> upVote({
+    required String review,
+    required String author,
+    required String token,
+  }) async {
+    var url = Uri.parse(
+        'https://devcritique-api.vercel.app/api/reviews/upvote/$review');
+    var response = await post(url,
+        headers: {"Content-Type": "application/json", "authorization": token},
+        body: jsonEncode({
+          "userId": author,
+        }));
+
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    // print(decoded);
+    print("upvoted");
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception(decoded["message"]);
+    }
+  }
+
+  static Future<void> downVote({
+    required String review,
+    required String author,
+    required String token,
+  }) async {
+    var url = Uri.parse(
+        'https://devcritique-api.vercel.app/api/reviews/downvote/$review');
+    var response = await post(url,
+        headers: {"Content-Type": "application/json", "authorization": token},
+        body: jsonEncode({
+          "userId": author,
+        }));
+
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    // print(decoded);
+    print("downvoted");
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception(decoded["message"]);
+    }
+  }
 }

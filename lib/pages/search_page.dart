@@ -85,7 +85,7 @@ class _SearchState extends State<Search> {
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
                       hintText: 'Search...',
-                      suffixIcon: IconButton(
+                      prefixIcon: IconButton(
                         icon: const Icon(Icons.search),
                         onPressed: () {
                           String query = _searchController.text.trim();

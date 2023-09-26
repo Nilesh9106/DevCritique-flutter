@@ -70,6 +70,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
+                              fullscreenDialog: true,
                               builder: (context) => profilePicture(
                                 image: widget.user.profilePicture,
                               ),
@@ -166,6 +167,10 @@ class profilePicture extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+      ),
       body: Container(
         color: Colors.transparent,
         child: Center(

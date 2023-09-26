@@ -45,7 +45,7 @@ class ProjectService {
       required String description,
       required String token,
       required String tech}) async {
-    List<String> techs = tech.split(",");
+    List<String> techs = tech.trim().split(",");
 
     var url = Uri.parse('https://devcritique-api.vercel.app/api/projects/');
     var response = await post(url,
@@ -59,6 +59,50 @@ class ProjectService {
 
     final decoded = jsonDecode(response.body) as Map<String, dynamic>;
     if (response.statusCode == 201) {
+    } else {
+      throw Exception(decoded["message"]);
+    }
+  }
+
+  static Future<void> like({
+    required String project,
+    required String author,
+    required String token,
+  }) async {
+    var url = Uri.parse(
+        'https://devcritique-api.vercel.app/api/projects/like/$project');
+    var response = await post(url,
+        headers: {"Content-Type": "application/json", "authorization": token},
+        body: jsonEncode({
+          "userId": author,
+        }));
+
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    // print(decoded);
+    print("liked");
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception(decoded["message"]);
+    }
+  }
+
+  static Future<void> dislike({
+    required String project,
+    required String author,
+    required String token,
+  }) async {
+    var url = Uri.parse(
+        'https://devcritique-api.vercel.app/api/projects/dislike/$project');
+    var response = await post(url,
+        headers: {"Content-Type": "application/json", "authorization": token},
+        body: jsonEncode({
+          "userId": author,
+        }));
+
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    // print(decoded);
+    print("disliked");
+    if (response.statusCode == 200) {
     } else {
       throw Exception(decoded["message"]);
     }

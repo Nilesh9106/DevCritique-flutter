@@ -86,8 +86,13 @@ class _MyDrawerState extends State<MyDrawer> {
           ListTile(
             onTap: () async {
               await AuthService.logout();
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const Login()));
+              // ignore: use_build_context_synchronously
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Login(),
+                  ),
+                  (route) => false);
             },
             leading: const Icon(Icons.logout),
             title: const Text("Logout"),

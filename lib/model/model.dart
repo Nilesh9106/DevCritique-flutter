@@ -38,7 +38,7 @@ class Project {
   final String description;
   final User author;
   List<String> technologies;
-  Map<dynamic, dynamic> ogDetails;
+  List<String> like;
 
   Project(
       {required this.id,
@@ -46,7 +46,7 @@ class Project {
       required this.description,
       required this.author,
       required this.technologies,
-      required this.ogDetails});
+      required this.like});
 
   factory Project.fromJson(Map<String, dynamic> json) {
     // print(json);
@@ -57,7 +57,7 @@ class Project {
       author: User.fromJson(
           (json['author'] is List ? json['author'][0] : json['author'])),
       technologies: json['technologies'].cast<String>(),
-      ogDetails: json['ogDetails'] ?? <dynamic, dynamic>{},
+      like: json['like']?.cast<String>() ?? [],
     );
   }
 }
@@ -69,6 +69,7 @@ class Review {
   final int? rating;
   final String status;
   final List<dynamic> comments;
+  final List<String> upVote;
 
   Review({
     required this.id,
@@ -78,6 +79,7 @@ class Review {
     required this.rating,
     required this.status,
     required this.comments,
+    required this.upVote,
   });
 
   factory Review.fromJson(Map<String, dynamic> json) {
@@ -88,6 +90,7 @@ class Review {
       rating: json['rating'],
       status: json['status'],
       comments: json['comments'],
+      upVote: json['upVote']?.cast<String>() ?? [],
     );
   }
 }
