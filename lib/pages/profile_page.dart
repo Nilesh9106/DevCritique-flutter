@@ -151,7 +151,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     return projects.isEmpty
         ? Text("No Projects")
         : Column(
-            children: projects.map((e) => ProjectWidget(project: e)).toList(),
+            children: projects
+                .map((e) => ProjectWidget(
+                      project: e,
+                      path: "profile",
+                    ))
+                .toList(),
           );
   }
 

@@ -22,9 +22,10 @@ class UserDetail extends StatelessWidget {
       },
       leading: CircleAvatar(
         backgroundImage: CachedNetworkImageProvider(
-            user.profilePicture != '/user.png'
-                ? user.profilePicture
-                : "https://devcritique.vercel.app/user.png"),
+          user.profilePicture != '/user.png'
+              ? user.profilePicture
+              : "https://devcritique.vercel.app/user.png",
+        ),
       ),
       title: Text(user.name ?? user.username),
       subtitle: Text("@${user.username}"),

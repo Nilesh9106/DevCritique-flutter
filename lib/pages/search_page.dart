@@ -46,7 +46,7 @@ class _SearchState extends State<Search> {
           end: Alignment.bottomCenter,
           colors: Theme.of(context).brightness == Brightness.dark
               ? [
-                  const Color.fromRGBO(12, 12, 12, 1),
+                  const Color.fromRGBO(30, 30, 30, 1),
                   Colors.black,
                 ]
               : [
@@ -122,7 +122,9 @@ class _SearchState extends State<Search> {
                                 physics: const BouncingScrollPhysics(),
                                 itemBuilder: (context, index) {
                                   return ProjectWidget(
-                                      project: _searchResults[index]);
+                                    project: _searchResults[index],
+                                    path: "search",
+                                  );
                                 },
                               ),
                   ],

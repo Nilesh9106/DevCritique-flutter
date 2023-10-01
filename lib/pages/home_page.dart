@@ -89,8 +89,10 @@ class _HomePageState extends State<HomePage> {
                 child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     itemCount: projects.length,
-                    itemBuilder: (context, index) =>
-                        ProjectWidget(project: projects[index])),
+                    itemBuilder: (context, index) => ProjectWidget(
+                          project: projects[index],
+                          path: "home",
+                        )),
               ),
             ),
       floatingActionButton: FloatingActionButton(

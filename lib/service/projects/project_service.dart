@@ -44,7 +44,8 @@ class ProjectService {
       required String author,
       required String description,
       required String token,
-      required String tech}) async {
+      required String tech,
+      required List<String> images}) async {
     List<String> techs = tech.trim().split(",");
 
     var url = Uri.parse('https://devcritique-api.vercel.app/api/projects/');
@@ -55,6 +56,7 @@ class ProjectService {
           "author": author,
           "description": description,
           "technologies": techs,
+          "images": images
         }));
 
     final decoded = jsonDecode(response.body) as Map<String, dynamic>;

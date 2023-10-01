@@ -1,6 +1,5 @@
-import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:link_preview_generator/link_preview_generator.dart';
 
 class OgPreview extends StatelessWidget {
   final String link;
@@ -9,7 +8,7 @@ class OgPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 10, bottom: 10),
+      margin: const EdgeInsets.only(top: 10, bottom: 10),
       decoration: BoxDecoration(
         border: Border.all(
           color: Theme.of(context).brightness == Brightness.dark
@@ -19,17 +18,15 @@ class OgPreview extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: AnyLinkPreview(
+      child: LinkPreviewGenerator(
+        bodyMaxLines: 2,
         link: link,
-        displayDirection: UIDirection.uiDirectionVertical,
-        urlLaunchMode: LaunchMode.externalApplication,
+        linkPreviewStyle: LinkPreviewStyle.large,
         backgroundColor: Theme.of(context).brightness == Brightness.dark
-            ? Color.fromRGBO(25, 25, 25, 1)
-            : Colors.grey[50],
-        bodyMaxLines: 4,
-        removeElevation: true,
+            ? const Color.fromRGBO(25, 25, 25, 1)
+            : Colors.grey[50]!,
         bodyTextOverflow: TextOverflow.ellipsis,
-        previewHeight: 300,
+        removeElevation: true,
         titleStyle: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
@@ -37,7 +34,6 @@ class OgPreview extends StatelessWidget {
               ? Colors.white
               : Colors.black,
         ),
-        cache: Duration(days: 7),
       ),
     );
   }

@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class User {
   final String id;
   final String? name;
@@ -38,6 +39,7 @@ class Project {
   final String description;
   final User author;
   List<String> technologies;
+  List<String> images;
   List<String> like;
 
   Project(
@@ -46,6 +48,7 @@ class Project {
       required this.description,
       required this.author,
       required this.technologies,
+      required this.images,
       required this.like});
 
   factory Project.fromJson(Map<String, dynamic> json) {
@@ -58,6 +61,7 @@ class Project {
           (json['author'] is List ? json['author'][0] : json['author'])),
       technologies: json['technologies'].cast<String>(),
       like: json['like']?.cast<String>() ?? [],
+      images: json['images']?.cast<String>() ?? [],
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:devcritique/components/og_detail.dart';
 import 'package:devcritique/components/snackbar.dart';
 import 'package:devcritique/components/user_detail.dart';
@@ -10,7 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ProjectWidget extends StatefulWidget {
   final Project project;
-  const ProjectWidget({super.key, required this.project});
+  final String path;
+  const ProjectWidget({super.key, required this.project, required this.path});
 
   @override
   State<ProjectWidget> createState() => _ProjectWidgetState();
@@ -27,6 +29,7 @@ class _ProjectWidgetState extends State<ProjectWidget> {
       var user = jsonDecode(value.getString("user")!);
       setState(() {
         isliked = widget.project.like.contains(user["_id"]);
+        // debugPrint("isliked: $isliked");
       });
     });
     super.initState();
@@ -34,7 +37,6 @@ class _ProjectWidgetState extends State<ProjectWidget> {
 
   Future handleLike() async {
     if (loading) {
-      print("aleady loading");
       return;
     }
     setState(() {
@@ -112,7 +114,59 @@ class _ProjectWidgetState extends State<ProjectWidget> {
             const SizedBox(
               height: 5,
             ),
-            OgPreview(link: widget.project.link),
+            Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                child: Row(
+                  children: widget.project.technologies
+                      .map(
+                        (e) => Text(
+                          "#$e ",
+                          textAlign: TextAlign.start,
+                          style: const TextStyle(color: Colors.blue),
+                        ),
+                      )
+                      .toList(),
+                )),
+            const SizedBox(
+              height: 5,
+            ),
+            widget.project.images.isNotEmpty
+                ? SizedBox(
+                    height: 250,
+                    child: ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: widget.project.images.length,
+                      itemBuilder: (context, index) => GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ImagePreview(
+                                  link: widget.project.images[index],
+                                  path: widget.path)),
+                        ),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Hero(
+                            tag: widget.project.images[index] + widget.path,
+                            child: CachedNetworkImage(
+                              placeholder: (context, url) => const Center(
+                                child: Icon(Icons.image, size: 50),
+                              ),
+                              imageUrl: widget.project.images[index],
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : OgPreview(link: widget.project.link),
             const SizedBox(
               height: 10,
             ),
@@ -184,7 +238,6 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
     setState(() {
       loading = false;
     });
-    print(reviews);
   }
 
   addReview() async {
@@ -358,7 +411,6 @@ class _ReviewListState extends State<ReviewList> {
 
   Future handleUpvote(Review review) async {
     if (loading) {
-      print("aleady loading");
       return;
     }
     setState(() {
@@ -449,6 +501,31 @@ class _ReviewListState extends State<ReviewList> {
             label: Text("${review.upVote.length}"),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ImagePreview extends StatelessWidget {
+  final String link;
+  final String path;
+  const ImagePreview({super.key, required this.link, required this.path});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Hero(
+          tag: link + path,
+          child: CachedNetworkImage(
+            alignment: Alignment.center,
+            placeholder: (context, url) => const Center(
+              child: Icon(Icons.image, size: 50),
+            ),
+            imageUrl: link,
+            fit: BoxFit.cover,
+          ),
+        ),
       ),
     );
   }

@@ -65,10 +65,11 @@ class _MyDrawerState extends State<MyDrawer> {
             ),
             currentAccountPicture: CircleAvatar(
               backgroundImage: CachedNetworkImageProvider(
-                  user?.profilePicture != "/user.png"
-                      ? (user?.profilePicture ??
-                          "https://devcritique.vercel.app/user.png")
-                      : "https://devcritique.vercel.app/user.png"),
+                user?.profilePicture != "/user.png"
+                    ? (user?.profilePicture ??
+                        "https://devcritique.vercel.app/user.png")
+                    : "https://devcritique.vercel.app/user.png",
+              ),
             ),
           ),
           ListTile(

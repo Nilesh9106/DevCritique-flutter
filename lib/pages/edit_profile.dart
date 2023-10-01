@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:devcritique/model/model.dart';
+import 'package:devcritique/service/image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,7 +20,7 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController _nameController = TextEditingController();
   File? _image;
   bool laoding = false;
-  String laodingText = "Uploading image...";
+  String loadingText = "Uploading image...";
 
   updateUser() async {
     setState(() {
@@ -29,21 +30,15 @@ class _EditProfileState extends State<EditProfile> {
     String token = prefs.getString("token") ?? "";
     if (_image != null) {
       setState(() {
-        laodingText = "Uploading image...";
+        loadingText = "Uploading image...";
       });
-      var request = MultipartRequest('POST',
-          Uri.parse("https://devcritique-api.vercel.app/api/file/upload"));
-      request.files.add(await MultipartFile.fromPath('file', _image!.path));
-      request.headers.addAll({"Content-Type": "multipart/form-data"});
-      var res = await request.send();
-      var response = await Response.fromStream(res);
-      var profilePicture = jsonDecode(response.body)["fileURL"];
+      var profilePicture = await ImageService.uploadImage(_image!);
       print(profilePicture);
 
       setState(() {
-        laodingText = "Updating data...";
+        loadingText = "Updating data...";
       });
-      response = await put(
+      var response = await put(
         Uri.parse(
             "https://devcritique-api.vercel.app/api/users/${widget.user.username}"),
         headers: {
@@ -62,7 +57,7 @@ class _EditProfileState extends State<EditProfile> {
       }
     } else {
       setState(() {
-        laodingText = "Updating data...";
+        loadingText = "Updating data...";
       });
       var response = await put(
         Uri.parse(
@@ -109,7 +104,7 @@ class _EditProfileState extends State<EditProfile> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Text(laodingText),
+                  Text(loadingText),
                 ],
               ),
             )
