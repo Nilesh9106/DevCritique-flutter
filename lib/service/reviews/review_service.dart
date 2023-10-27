@@ -36,6 +36,31 @@ class ReviewService {
     }
   }
 
+  static Future<void> addComment(
+      {required String review,
+      required String username,
+      required String text,
+      required String token}) async {
+    var url = Uri.parse('https://devcritique-api.vercel.app/api/comments/');
+    var response = await post(
+      url,
+      headers: {"Content-Type": "application/json", "authorization": token},
+      body: jsonEncode({
+        "review": review,
+        "comment": {
+          "username": username,
+          "text": text,
+        }
+      }),
+    );
+
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception(decoded["message"]);
+    }
+  }
+
   static Future<void> upVote({
     required String review,
     required String author,

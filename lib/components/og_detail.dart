@@ -19,7 +19,7 @@ class OgPreview extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: LinkPreviewGenerator(
-        bodyMaxLines: 2,
+        bodyMaxLines: 1,
         link: link,
         linkPreviewStyle: LinkPreviewStyle.large,
         backgroundColor: Theme.of(context).brightness == Brightness.dark
@@ -34,6 +34,7 @@ class OgPreview extends StatelessWidget {
               ? Colors.white
               : Colors.black,
         ),
+        cacheDuration: Duration(days: 7),
       ),
     );
   }

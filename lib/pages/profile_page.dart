@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:devcritique/components/project_card.dart';
 import 'package:devcritique/model/model.dart';
@@ -44,15 +42,15 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.all(10),
-              padding: EdgeInsets.all(20),
+              margin: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? Color.fromRGBO(15, 15, 15, 1)
+                    ? const Color.fromRGBO(15, 15, 15, 1)
                     : Colors.grey[200],
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -86,22 +84,22 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Text(
                     widget.user.name ?? widget.user.username,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 5,
                   ),
                   Text(
                     "@${widget.user.username}",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey,
@@ -115,11 +113,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     child: LinearProgressIndicator(),
                   )
                 : Container(
-                    margin: EdgeInsets.all(10),
-                    padding: EdgeInsets.all(10),
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Theme.of(context).brightness == Brightness.dark
-                          ? Color.fromRGBO(15, 15, 15, 1)
+                          ? const Color.fromRGBO(15, 15, 15, 1)
                           : Colors.grey[200],
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -127,14 +125,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Projects",
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         _buildProjectList(),
@@ -149,7 +147,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   Widget _buildProjectList() {
     return projects.isEmpty
-        ? Text("No Projects")
+        ? const Text("No Projects")
         : Column(
             children: projects
                 .map((e) => ProjectWidget(
@@ -161,7 +159,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildReviewList() {
-    return Text("data");
+    return const Text("data");
   }
 }
 
