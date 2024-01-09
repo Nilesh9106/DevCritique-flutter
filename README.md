@@ -1,16 +1,8 @@
-# devcritique
+# Devcritique - Project Review System
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# ScreenShots
+<div style="display:flex; gap:10px;">
+  <img src="https://res.cloudinary.com/dsna0geag/image/upload/v1696070303/n1po44wnmzek3at7klsq.png" width="300px" />
+  <img src="https://res.cloudinary.com/dsna0geag/image/upload/v1696070304/h2gckfxeqhws4rtm2r6r.png" width="300px" />
+  <img src="https://res.cloudinary.com/dsna0geag/image/upload/v1696070306/gfg0lvlmelahozqgxaji.png" width="300px" />
+</div>
